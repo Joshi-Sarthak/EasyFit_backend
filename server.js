@@ -7,7 +7,7 @@ const workoutRoutes = require("./routes/workouts");
 const userRoutes = require("./routes/user");
 const app = express();
 
-app.use(cors({ origin: `https://easyfit-workouts.vercel.app/` }));
+app.use(cors({ origin: `https://easyfit-workouts.vercel.app` }));
 
 app.use(express.json());
 
