@@ -3,11 +3,34 @@ require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
+const helmet = require("helmet");
+const compression = require("compression");
 const workoutRoutes = require("./routes/workouts");
 const userRoutes = require("./routes/user");
+
 const app = express();
 
-app.use(cors({ origin: `https://easyfit-workouts.vercel.app` }));
+// Security middlewares
+app.use(helmet());
+app.use(compression());
+
+const allowedOrigins = ["https://easyfit-workouts.vercel.app", "http://localhost:5173"];
+
+app.use(
+	cors({
+		origin: (origin, callback) => {
+			// Allow requests with no origin (like mobile apps or curl requests)
+			if (!origin) return callback(null, true);
+			if (allowedOrigins.includes(origin)) {
+				return callback(null, true);
+			} else {
+				const msg = "The CORS policy for this site does not allow access from the specified origin.";
+				return callback(new Error(msg), false);
+			}
+		},
+		credentials: true, // If you need to allow cookies or authentication headers
+	})
+);
 
 app.use(express.json());
 
@@ -30,4 +53,3 @@ mongoose
 	.catch((err) => {
 		console.log(err);
 	});
-``;
